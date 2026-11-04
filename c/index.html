@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Shared from Cadence</title>
+  <meta name="description" content="Music shared from Cadence. Open it in the app, or listen on YouTube Music." />
+  <meta property="og:title" content="Shared from Cadence" />
+  <meta property="og:description" content="Tap to listen in Cadence, or on YouTube Music." />
+  <meta property="og:image" content="https://octavianbanarizatic-hub.github.io/icon.png" />
+  <meta name="theme-color" content="#0b0d14" />
+  <link rel="icon" href="../icon.png" />
+  <link rel="stylesheet" href="../page.css" />
+</head>
+<body>
+  <main>
+    <header class="brand">
+      <svg width="28" height="28" viewBox="0 0 48 48" aria-hidden="true"><path d="M35.31 12.69A16 16 0 1 0 35.31 35.31" fill="none" stroke="var(--red)" stroke-width="7" stroke-linecap="round"/><circle cx="35.31" cy="35.31" r="5" fill="var(--text)"/></svg>
+      <span>cadence</span>
+    </header>
+
+    <section class="card" id="card" hidden>
+      <div class="art" id="art"></div>
+      <div class="kicker" id="kicker"></div>
+      <h1 id="title"></h1>
+      <p class="by" id="by"></p>
+      <div class="actions">
+        <a class="btn primary" id="open" hidden>Open in Cadence</a>
+        <a class="btn" id="yt" target="_blank" rel="noopener">Listen on YouTube Music</a>
+      </div>
+      <p class="get">No Cadence yet? <a href="https://github.com/octavianbanarizatic-hub/Cadence-releases/releases/latest">Get it for Android</a></p>
+    </section>
+
+    <section class="card" id="broken" hidden>
+      <h1>This link is broken</h1>
+      <p class="by">Ask for it again, or copy all of it.</p>
+    </section>
+  </main>
+
+  <script>
+    // Cadence makes these links (src-tauri/src/share.rs); phones with the
+    // app open them there and never show this page.
+    const q = new URLSearchParams(location.search);
+    const ID = /^[\w-]{11}$/;
+    const releases = "https://github.com/octavianbanarizatic-hub/Cadence-releases/releases/latest";
+    const $ = (id) => document.getElementById(id);
+
+    function show({ kicker, title, by, cover, yt }) {
+      $("kicker").textContent = kicker;
+      $("title").textContent = title;
+      $("by").textContent = by;
+      $("yt").href = yt;
+      document.title = `${title} · Cadence`;
+      if (cover) {
+        const img = new Image();
+        img.alt = "";
+        // A YouTube thumbnail is 4:3 with the 16:9 picture in the middle; the
+        // cover is the square at its centre.
+        img.src = `https://i.ytimg.com/vi/${cover}/hqdefault.jpg`;
+        $("art").append(img);
+      }
+      // Android: open the app straight away (even where links aren't set to open it).
+      if (/Android/i.test(navigator.userAgent)) {
+        const open = $("open");
+        open.href = `intent://${location.host}${location.pathname}${location.search}#Intent;scheme=https;package=dev.cadence.player;S.browser_fallback_url=${encodeURIComponent(releases)};end`;
+        open.hidden = false;
+      }
+      $("card").hidden = false;
+    }
+
+    const song = q.get("s"), album = q.get("al"), ids = q.get("ids") ?? "";
+    if (song && ID.test(song)) {
+      show({ kicker: "Shared song", title: q.get("t") || "A song", by: q.get("a") ?? "", cover: song, yt: `https://music.youtube.com/watch?v=${song}` });
+    } else if (album && /^MPRE[\w-]+$/.test(album)) {
+      const cover = q.get("c");
+      show({ kicker: "Shared album", title: q.get("t") || "An album", by: q.get("a") ?? "", cover: cover && ID.test(cover) ? cover : null, yt: `https://music.youtube.com/browse/${album}` });
+    } else if (ids && ids.length % 11 === 0 && /^[\w-]+$/.test(ids)) {
+      const list = ids.match(/.{11}/g);
+      const n = list.length;
+      // YouTube makes a playlist of up to 50 songs from a list of ids.
+      show({ kicker: "Shared playlist", title: q.get("p") || "A playlist", by: `${n} ${n === 1 ? "song" : "songs"}`, cover: list[0], yt: `https://www.youtube.com/watch_videos?video_ids=${list.slice(0, 50).join(",")}` });
+    } else {
+      $("broken").hidden = false;
+    }
+  </script>
+</body>
+</html>

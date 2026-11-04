@@ -1,0 +1,10 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "dev.cadence.player",
+      "sha256_cert_fingerprints": ["D8:CC:21:CF:4E:74:A1:09:09:76:5A:D0:02:2A:99:0D:28:F1:41:B7:8D:3B:59:7B:0E:3C:49:A2:41:9B:42:C6"]
+    }
+  }
+]

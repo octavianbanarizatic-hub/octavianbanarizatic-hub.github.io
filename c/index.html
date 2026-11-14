@@ -68,12 +68,16 @@
       $("card").hidden = false;
     }
 
-    const song = q.get("s"), album = q.get("al"), ids = q.get("ids") ?? "";
+    const song = q.get("s"), album = q.get("al"), artist = q.get("ar"), list = q.get("yl"), ids = q.get("ids") ?? "";
     if (song && ID.test(song)) {
       show({ kicker: "Shared song", title: q.get("t") || "A song", by: q.get("a") ?? "", cover: song, yt: `https://music.youtube.com/watch?v=${song}` });
     } else if (album && /^MPRE[\w-]+$/.test(album)) {
       const cover = q.get("c");
       show({ kicker: "Shared album", title: q.get("t") || "An album", by: q.get("a") ?? "", cover: cover && ID.test(cover) ? cover : null, yt: `https://music.youtube.com/browse/${album}` });
+    } else if (artist && /^UC[\w-]+$/.test(artist)) {
+      show({ kicker: "Shared artist", title: q.get("t") || "An artist", by: "", cover: null, yt: `https://music.youtube.com/channel/${artist}` });
+    } else if (list && /^[\w-]+$/.test(list)) {
+      show({ kicker: "Shared playlist", title: "A playlist", by: "", cover: null, yt: `https://music.youtube.com/playlist?list=${list}` });
     } else if (ids && ids.length % 11 === 0 && /^[\w-]+$/.test(ids)) {
       const list = ids.match(/.{11}/g);
       const n = list.length;

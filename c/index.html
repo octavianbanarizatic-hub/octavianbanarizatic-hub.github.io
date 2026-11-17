@@ -28,7 +28,7 @@
         <a class="btn primary" id="open" hidden>Open in Cadence</a>
         <a class="btn" id="yt" target="_blank" rel="noopener">Listen on YouTube Music</a>
       </div>
-      <p class="get">No Cadence yet? <a href="https://github.com/octavianbanarizatic-hub/Cadence-releases/releases/latest">Get it for Android</a></p>
+      <p class="get">No Cadence yet? <a href="https://github.com/octavianbanarizatic-hub/Cadence-app/releases/latest">Get it for Android</a></p>
     </section>
 
     <section class="card" id="broken" hidden>
@@ -42,7 +42,7 @@
     // app open them there and never show this page.
     const q = new URLSearchParams(location.search);
     const ID = /^[\w-]{11}$/;
-    const releases = "https://github.com/octavianbanarizatic-hub/Cadence-releases/releases/latest";
+    const releases = "https://github.com/octavianbanarizatic-hub/Cadence-app/releases/latest";
     const $ = (id) => document.getElementById(id);
 
     function show({ kicker, title, by, cover, yt }) {
